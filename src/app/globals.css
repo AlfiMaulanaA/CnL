@@ -1,0 +1,110 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-scene text-slate-800 font-body antialiased;
+    overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display;
+  }
+
+  button:focus-visible,
+  a:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 3px solid #8b5cf6;
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex select-none items-center justify-center gap-2 rounded-2xl px-5 py-3 font-display font-bold transition active:translate-y-0.5 disabled:pointer-events-none disabled:opacity-50;
+    min-height: 44px;
+  }
+
+  .btn-primary {
+    @apply bg-brand-purple text-white shadow-candy hover:brightness-110;
+  }
+
+  .btn-blue {
+    @apply bg-brand-blue text-white shadow-candy hover:brightness-110;
+  }
+
+  .btn-green {
+    @apply bg-brand-green text-white shadow-candy hover:brightness-110;
+  }
+
+  .btn-yellow {
+    @apply bg-brand-yellow text-slate-900 shadow-candy hover:brightness-105;
+  }
+
+  .btn-orange {
+    @apply bg-brand-orange text-white shadow-candy hover:brightness-110;
+  }
+
+  .btn-danger {
+    @apply bg-brand-red text-white shadow-candy hover:brightness-110;
+  }
+
+  .btn-ghost {
+    @apply bg-white text-slate-700 shadow-candy ring-1 ring-slate-200 hover:bg-slate-50;
+  }
+
+  .btn-sm {
+    @apply rounded-xl px-3 py-1.5 text-sm;
+    min-height: 36px;
+  }
+
+  .card {
+    @apply rounded-2xl border border-slate-100 bg-white shadow-soft;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold;
+  }
+}
+
+/* Nice readable scrollbar for the game log. */
+.log-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #c4b5fd transparent;
+}
+
+.log-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.log-scroll::-webkit-scrollbar-thumb {
+  background: #c4b5fd;
+  border-radius: 999px;
+}
+
+/* Settings toggle: honour the in-app Reduced Motion switch. */
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

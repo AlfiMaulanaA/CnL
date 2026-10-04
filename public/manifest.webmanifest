@@ -1,0 +1,19 @@
+{
+  "name": "Climb & Slide",
+  "short_name": "ClimbSlide",
+  "description": "A colorful ladders-and-slides board game you can play with friends or bots, online and offline.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F8FAFC",
+  "theme_color": "#8B5CF6",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
