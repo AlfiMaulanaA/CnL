@@ -13,6 +13,7 @@ import { rollDice } from '@/lib/game/dice';
 import { playSound } from '@/lib/sound';
 import type { GameState } from '@/types/game';
 import type { ChatMessage } from '@/types/chat';
+import { p2pManager } from '@/lib/socket/p2pRoom';
 
 type PlayerSlot = {
   id: string;
@@ -75,10 +76,29 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
   const theme = getTheme(initialConfig.theme || 'classic');
   const animation = useMatchAnimation(game, { animations: true, playSound });
 
-  // BroadcastChannel for sync across multi-tab testing
+  // BroadcastChannel & PeerJS WebRTC P2P sync
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const channel = new BroadcastChannel(`room_${roomId}`);
+
+    const handlePeerData = ({ data }: any) => {
+      if (data?.type === 'SYNC_GAME') {
+        setGame(data.game);
+        setIsPlaying(true);
+      } else if (data?.type === 'CHAT') {
+        setChatMessages((prev) => [...prev, data.message]);
+      } else if (data?.type === 'EMOTE') {
+        playSound('emote');
+      }
+    };
+
+    if (initialConfig.isHost) {
+      p2pManager.createRoom({ roomId, name: initialConfig.name, avatar: initialConfig.avatar });
+    } else {
+      p2pManager.joinRoom({ roomId, name: initialConfig.name, avatar: initialConfig.avatar });
+    }
+
+    p2pManager.on('PEER_DATA', handlePeerData);
 
     channel.onmessage = (event) => {
       const data = event.data;
@@ -94,14 +114,23 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
 
     return () => {
       channel.close();
+      p2pManager.off('PEER_DATA', handlePeerData);
     };
-  }, [roomId]);
+  }, [roomId, initialConfig]);
 
   const broadcastEvent = (event: any) => {
     if (typeof window === 'undefined') return;
     const channel = new BroadcastChannel(`room_${roomId}`);
     channel.postMessage(event);
     channel.close();
+
+    if (event.type === 'SYNC_GAME') {
+      p2pManager.broadcast('SYNC_GAME', event);
+    } else if (event.type === 'CHAT') {
+      p2pManager.broadcast('CHAT', event);
+    } else if (event.type === 'EMOTE') {
+      p2pManager.broadcast('EMOTE', event);
+    }
   };
 
   const copyInviteLink = () => {
